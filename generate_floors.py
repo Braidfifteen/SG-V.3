@@ -36,8 +36,7 @@ class GenerateFloor():
         self.temp_room_dict = {}
         self.create_floor()
            
-    def get_room_info(self, room_number): 
-        self.rooms_on_floor.append(room_number)
+    def get_room_info(self, room_number):
         self.temp_room_dict.clear()
         for room_loc, room_nums in ROOM_LOCATION_DICT.items():
             if room_number in room_nums:
@@ -68,6 +67,8 @@ class GenerateFloor():
         return next_room_numbers
                        
     def get_rooms(self, room_number):
+        if room_number not in self.finished_rooms:
+            self.rooms_on_floor.append(room_number)    
         self.finished_rooms.update([room_number]) 
         self.get_room_info(room_number)
         self.get_exit_rooms(room_number)
@@ -93,3 +94,7 @@ class GenerateFloor():
                 for room_number in self.next_room:
                     self.get_rooms(room_number)
                     count += 1
+                    
+i = GenerateFloor()
+print(i.floor_dict)
+print(i.rooms_on_floor)
