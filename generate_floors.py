@@ -87,7 +87,7 @@ class GenerateFloor():
         self.finished_rooms = set()
         count = 0
         while count <= random.randint(6, 15):
-            if len(self.next_room) <= 0 or len(self.rooms_on_floor) <= 13:
+            if len(self.next_room) <= 0:
                 self.get_rooms(random.randint(0, 19))
                 count += 1
             else:
