@@ -77,8 +77,9 @@ class GenerateFloor():
         self.get_room_info(room_number)
         self.get_exit_rooms(room_number)
         for next_room_number in self.get_next_room_numbers(room_number):
-            if next_room_number not in self.finished_rooms and i not in self.next_room:
-                self.next_room.append(i)
+            if next_room_number not in self.finished_rooms and \
+                    next_room_number not in self.next_room:
+                self.next_room.append(next_room_number)
 
 
     def create_floor(self):
