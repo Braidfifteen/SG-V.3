@@ -2,6 +2,7 @@ import random
 
 
 
+
 ROOM_EXIT_DICT = {
     "backrow": ["up", "left", "right"],
     "backleftcorner": ["up", "right"],
@@ -28,11 +29,15 @@ ROOM_LOCATION_DICT = {
     "toprightcorner": [49],
     "topleftcorner": [45]
     }
+    
+    
+    
 
-
+    
+    
 class GenerateFloor():
     def __init__(self):
-        self.floor_dict = {i: [] for i in range(50)}
+        self.floor_dict = {i: [] for i in range(20)}
         self.rooms_on_floor = []
         self.temp_room_dict = {}
         self.create_floor()
@@ -41,8 +46,8 @@ class GenerateFloor():
         self.temp_room_dict.clear()
         for room_loc, room_nums in ROOM_LOCATION_DICT.items():
             if room_number in room_nums:
-                self.temp_room_dict[room_number] = random.choice(ROOM_EXIT_DICT[room_loc])
-
+                self.temp_room_dict[room_number] = random.sample(ROOM_EXIT_DICT[room_loc],
+                    random.randint(1, len(ROOM_EXIT_DICT[room_loc])))
                 break
                 
     def get_exit_rooms(self, room_number):
@@ -58,12 +63,11 @@ class GenerateFloor():
                 exit = (exit_direction, exit_room_no)
                 exit_list.update([exit])
         for exits in self.temp_room_dict.values():
-            exit = (exits, exit_to_room_no[exits])
-            exit_list.update([exit])
-        exit_list = list(exit_list)
+            for exit in exits:
+                exit = (exit, exit_to_room_no[exit])
+                exit_list.update([exit])
         self.floor_dict[room_number] = exit_list
         self.temp_room_dict[room_number] = exit_list
-        print(self.temp_room_dict[room_number])
     
     def get_next_room_numbers(self, room_number):
         next_room_numbers = []
@@ -71,7 +75,7 @@ class GenerateFloor():
             exit_directions, room_numbers = exits
             next_room_numbers.append(room_numbers)
         return next_room_numbers
-                   
+                       
     def get_rooms(self, room_number):
         if room_number not in self.finished_rooms:
             self.rooms_on_floor.append(room_number)    
@@ -90,14 +94,82 @@ class GenerateFloor():
         count = 0
         while count <= random.randint(6, 15):
             if len(self.next_room) <= 0:
-                self.get_rooms(random.randint(0, 49))
+                self.get_rooms(random.randint(0, 19))
                 count += 1
             else:
-                print(self.next_room)
                 for room_number in self.next_room.copy():
                     self.get_rooms(room_number)
                     count += 1
+                    
+                    
+                    
+def test():
+    room_number = 5
+  
+    count = 0
+    room_list = []
+    none_list = []
+    room_list.append(room_number)
+    next_room = 0
+    boolean = False
+
+    while count <= 10:
+        exit_to_room_no = {
+        "up": room_list[-1] + 5,
+        "down": room_list[-1] - 5,
+        "left": room_list[-1] - 1,
+        "right": room_list[-1] + 1
+        }  
+
+        room_number = room_list[-1]
+
+        for room_loc, room_nums in ROOM_LOCATION_DICT.items():
+            if room_number in room_nums:
+                next_room = random.choice(ROOM_EXIT_DICT[room_loc])
+                next_room = (exit_to_room_no[next_room])
+                print(room_list)
+                print(room_number)
+                print(next_room)
+                if next_room not in room_list:
+                    room_list.append(next_room)
+                    count += 1
+
+
+                else:
                 
-i = GenerateFloor()
-print(i.floor_dict)
-print(i.rooms_on_floor)
+
+
+                
+    test = set()
+    for i in room_list:
+        test.update([i])
+        
+
+
+    return test
+            
+            
+                    
+            
+            
+                    
+                    
+        
+def get_room_no_list():
+
+    while count <= 10:
+        rn = room_list[-1]
+        dir_list = [rn + 5, rn + 1, rn - 1, rn - 5]
+        rn = random.choice(dir_list)
+        if rn in in_list and rn not in room_list:
+            print(rn)
+
+            room_list.append(rn)
+            count += 1
+        else:
+            print(rn)
+            continue
+        
+    return room_list
+        
+print(test())
