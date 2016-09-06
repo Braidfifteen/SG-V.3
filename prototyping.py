@@ -104,14 +104,14 @@ class GenerateFloor():
                     
                     
 def test():
-    room_number = 5
+    room_number = random.randint(0, 49)
   
     count = 0
     room_list = []
     none_list = []
     room_list.append(room_number)
     next_room = 0
-    boolean = False
+
 
     while count <= 10:
         exit_to_room_no = {
@@ -133,9 +133,11 @@ def test():
                 if next_room not in room_list:
                     room_list.append(next_room)
                     count += 1
-
-
                 else:
+                    random.shuffle(room_list)
+                
+
+
                 
 
 
