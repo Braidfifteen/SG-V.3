@@ -7,7 +7,7 @@ ROOM_EXIT_DICT = {
     "backrow": [("up", 2), ("left", 1), ("right", 1)],
     "backleftcorner": [("up", 2), ("right", 2)],
     "backrightcorner": [("up", 2), ("left", 2)],
-    "middle": [("up", 4), ("left", 2), ("right", 2)], #("down", 1), ("right", 1)],
+    "middle": [("up", 3), ("left", 2), ("right", 2)], #("down", 1), ("right", 1)],
     "rightside": [("up", 2), ("left", 2)], #("down", 1)],
     "leftside": [("up", 2), ("right", 2)], #("down", 1)],
     "toprow": [("right", 1), ("left", 1)], #("down", 2)],
@@ -30,22 +30,22 @@ ROOM_LOCATION_DICT = {
     "topleftcorner": [45]
     }
     
-    
+  
+room_number = random.randint(0, 9)
+
+
+room_list = []
+floor_dict = {i: [] for i in range(50)}
+
+room_list.append(room_number)
+next_room = 0    
+test_list = set()
     
 
-    
 
                     
 def test():
-    room_number = random.randint(0, 9)
-  
     count = 0
-    room_list = []
-    none_list = []
-    room_list.append(room_number)
-    next_room = 0
-
-
     while count <= 10:
         exit_to_room_no = {
         "up": room_list[-1] + 5,
@@ -63,38 +63,40 @@ def test():
                     direct, prob = i
                     for h in range(prob):
                         direction_list.append(direct)
-        print(direction_list)
         next_room = random.choice(direction_list)
-        print(next_room)
+
         next_room = (exit_to_room_no[next_room])
-        print(next_room)
+
         if next_room not in room_list:
             room_list.append(next_room)
             count += 1
         else:
             random.shuffle(room_list)
-        
-        """
-        for room_loc, room_nums in ROOM_LOCATION_DICT.items():
-            if room_number in room_nums:
-                next_room = random.choice(ROOM_EXIT_DICT[room_loc])
-                next_room = (exit_to_room_no[next_room])
-                print(room_list)
-                print(room_number)
-                print(next_room)
-                if next_room not in room_list:
-                    room_list.append(next_room)
-                    count += 1
-                else:
-                    random.shuffle(room_list)
-        """
-        
-    test = set()
-    for i in room_list:
-        test.update([i])
+
         
 
 
-    return test
-     
+        for i in room_list:
+            test_list.update([i])
+        for i in test_list:
+            get_exit(i)
+
+
+
+    return floor_dict
+
+def get_exit(room_no):
+    exit_list = []
+    exit_to_room_no = {
+    "up": room_no + 5,
+    "down": room_no - 5,
+    "left": room_no - 1,
+    "right": room_no + 1
+    }
+    for direct, exit_room_no in exit_to_room_no.items():
+        if exit_room_no in test_list:
+            exit = (direct, exit_room_no)
+            exit_list.append(exit)    
+    floor_dict[room_no] = exit_list
+        
 print(test())
