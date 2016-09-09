@@ -30,6 +30,9 @@ ROOM_LOCATION_DICT = {
     
 class GenerateFloor():
     def __init__(self):
+        """
+        Class that generates floors with random room layout.
+        """
         self.floor_dict = {i: [] for i in range(50)}
         self.rooms_on_floor = [random.randint(0, 14)]
         self.create_floor()
@@ -48,6 +51,9 @@ class GenerateFloor():
         return info_dict
 
     def get_rooms(self, room_no):
+        """
+        Finds placement for rooms.
+        """
         direction_list = []
         for room_loc, room_nums in ROOM_LOCATION_DICT.items():
             if room_no in room_nums:
@@ -59,6 +65,9 @@ class GenerateFloor():
         return self.get_info(room_no)[next_room]
 
     def get_exits(self, room_no):
+        """
+        Finds appropriate exit directions for rooms after they are placed.
+        """
         exit_list = []
         for direct, exit_room_no in self.get_info(room_no).items():
             if exit_room_no in self.rooms_on_floor:
@@ -67,6 +76,9 @@ class GenerateFloor():
         self.floor_dict[room_no] = exit_list
 
     def create_floor(self):
+        """
+        Creates random floor.
+        """
         count = 0
         while count <= random.randint(6, 14):
             next_room = self.get_rooms(self.rooms_on_floor[-1])
@@ -77,6 +89,6 @@ class GenerateFloor():
                 random.shuffle(self.rooms_on_floor)
         for room in self.rooms_on_floor:
             self.get_exits(room)
-            
-test = GenerateFloor()
-print(test.floor_dict)
+        return self.floor_dict
+        
+        
