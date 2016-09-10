@@ -20,7 +20,7 @@ class GameApp():
     def new_game(self):
         """Initializes a new game."""
         self.floor = GenerateFloor()
-        self.player = Player(self.screen_rect.center, (16, 16))
+        self.player = Player(self, self.screen_rect.center, (16, 16))
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
@@ -71,7 +71,7 @@ class GameApp():
                 self.start_new_game(event.key)
             if event.type == pg.KEYUP:
                 self.keys = pg.key.get_pressed()
-            self.player.get_event(event, self.keys)
+            self.player.get_event(event)
              
     def display_fps(self):
         """Show FPS in the program window."""
@@ -81,7 +81,7 @@ class GameApp():
         
     def update(self, dt):
         """Update all sprites."""
-        self.player.update(self.keys, dt)
+        self.player.update(self.room.walls)
         for door in self.room.doors:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
