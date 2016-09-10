@@ -29,7 +29,8 @@ class GameApp():
         self.background = pg.Surface(self.screen.get_size()).convert()
         self.background.fill(c.DARKGREEN)
         self.all_sprites.clear(p.WINDOW, self.background)
-        self.all_sprites.add(self.room.walls, self.room.doors, self.player)
+        self.all_sprites.add(self.room.wall_container, self.room.door_container,
+                             self.room.collider_container, self.player)
         
         self.main_loop()
         
@@ -56,7 +57,8 @@ class GameApp():
         self.player.rect.topleft = arrival_spots[door.direction]
         self.room = room
         self.all_sprites.empty()
-        self.all_sprites.add(self.room.walls, self.room.doors, self.player)
+        self.all_sprites.add(self.room.wall_container, self.room.door_container,
+                             self.room.collider_container, self.player)
         
     def event_loop(self):
         """
@@ -81,8 +83,8 @@ class GameApp():
         
     def update(self, dt):
         """Update all sprites."""
-        self.player.update(self.room.walls)
-        for door in self.room.doors:
+        self.player.update(self.room.wall_container)
+        for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
                 break

@@ -10,7 +10,7 @@ class Player(pg.sprite.DirtySprite):
         self.rect = self.image.get_rect(center=pos)
         self.room = None
         self.game = game
-        self.stats = PlayerStats()
+        self.stats = PlayerStats(self)
         self.logic = PlayerLogic()
         self.velocity = [0, 0]
 
@@ -47,14 +47,41 @@ class Player(pg.sprite.DirtySprite):
                 self.rect.top = wall.rect.bottom
             break
             
+            
 class PlayerStats():
-    def __init__(self):
-        self.speed = 5
+    def __init__(self, player):
+        self.player = player
         self.health = 100
-        self.damage = 5
+        self.speed = 5
+        self.damage_multiplier = 0
+        self.luck = 0
+        self.health_info()
+        
+    def health_info(self):
+        self.health_timer = 0
+        self.health_cooldown = 400
+        
+    def speed_info(self):
+        pass
+        
+    def damage_info(self):
+        pass
+        
+        
+class Guns():
+    def __init__(self, player):
+        self.player = player
+        self.shot_timer = 0
+        self.stats()
+        
+    def stats(self):
+        self.damage = 10
+        self.shot_cooldown = 100
+        self.ammo = 100
         
 class PlayerLogic():
     def __init(self):
         pass
         
-    
+
+        
