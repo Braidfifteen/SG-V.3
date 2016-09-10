@@ -1,17 +1,6 @@
 import pygame as pg
 import prepare as p
 
-DIRECT_DICT = {"UP": (0, -1),
-               "RIGHT": (1, 0),
-               "DOWN": (0, 1),
-               "LEFT": (-1, 0)}
-               
-CONTROLS = {pg.K_w: "UP", 
-            pg.K_d: "RIGHT",
-            pg.K_s: "DOWN",
-            pg.K_a: "LEFT"
-           }
-            
             
 class Sprite(pg.sprite.DirtySprite):
     """Basic sprite class for all actors."""

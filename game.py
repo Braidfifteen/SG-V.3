@@ -2,7 +2,7 @@ import pygame as pg
 import prepare as p
 import constants as c
 from rooms import Room
-import spriteclass as sc
+from playerinfo import Player
 from generate_floors import GenerateFloor
 import random
 
@@ -14,23 +14,29 @@ class GameApp():
         self.screen_rect = self.screen.get_rect()
         self.game_running = True
         self.clock = pg.time.Clock()
+        self.keys = pg.key.get_pressed()
+        self.fps = 60
         
     def new_game(self):
         """Initializes a new game."""
         self.floor = GenerateFloor()
-        self.player = sc.Player(self, self.screen_rect.center, (16, 16), c.GOLD)
+        self.player = Player(self.screen_rect.center, (16, 16))
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
         
         self.all_sprites = pg.sprite.LayeredDirty()
         self.background = pg.Surface(self.screen.get_size()).convert()
-        self.background.fill(c.DARKSLATEGREY)
+        self.background.fill(c.DARKGREEN)
         self.all_sprites.clear(p.WINDOW, self.background)
         self.all_sprites.add(self.room.walls, self.room.doors, self.player)
         
         self.main_loop()
-    
+        
+    def start_new_game(self, key):
+        if key == pg.K_r:
+            self.new_game()
+            
     def make_rooms(self):
         room_size = c.SCREEN_SIZE
         wall_size = c.TILE_SIZE
@@ -58,12 +64,14 @@ class GameApp():
         Sends events to player so they can also process events.
         """
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
                 self.game_running = False
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_r:
-                    self.new_game()
-            self.player.get_event(event)
+            if event.type == pg.KEYDOWN:
+                self.keys = pg.key.get_pressed()
+                self.start_new_game(event.key)
+            if event.type == pg.KEYUP:
+                self.keys = pg.key.get_pressed()
+            self.player.get_event(event, self.keys)
              
     def display_fps(self):
         """Show FPS in the program window."""
@@ -71,9 +79,9 @@ class GameApp():
         caption = template.format(c.CAPTION, self.clock.get_fps())
         pg.display.set_caption(caption)
         
-    def update(self):
+    def update(self, dt):
         """Update all sprites."""
-        self.player.update(self.room)
+        self.player.update(self.keys, dt)
         for door in self.room.doors:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
@@ -85,9 +93,11 @@ class GameApp():
         pg.display.update(dirty_rects)
         
     def main_loop(self):
+        self.clock.tick(self.fps)/1000.0
+        dt = 0.0
         while self.game_running:
             self.event_loop()
-            self.update()
+            self.update(dt)
             self.render()
-            self.clock.tick(c.FPS)
+            dt = self.clock.tick(self.fps)/1000.0
             self.display_fps()

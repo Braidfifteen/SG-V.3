@@ -6,7 +6,7 @@ import constants as c
 class Wall(pg.sprite.DirtySprite):
     image = pg.Surface(c.TILE_SIZE)
     image.fill(c.DARKRED)
-    pg.draw.rect(image, c.FIREBRICK, ((0, 0), c.TILE_SIZE), 2)
+    pg.draw.rect(image, c.TEAL, ((0, 0), c.TILE_SIZE), 2)
     def __init__(self, topleft, size, *groups):
         super().__init__(*groups)
         self.rect = self.image.get_rect(topleft=topleft)

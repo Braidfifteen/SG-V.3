@@ -1,7 +1,26 @@
+import pygame as pg
+import math
+
 SCREEN_SIZE = (1024, 768)
 TILE_SIZE = (32, 32)
 FPS = 60
 CAPTION = "SG V.3"
+
+DIRECT_DICT = {"UP": (0, -1),
+               "RIGHT": (1, 0),
+               "DOWN": (0, 1),
+               "LEFT": (-1, 0)}
+               
+CONTROLS = {pg.K_w: "UP", 
+            pg.K_d: "RIGHT",
+            pg.K_s: "DOWN",
+            pg.K_a: "LEFT"
+           }
+           
+ANGLE_UNIT_SPEED = math.sqrt(2)/2
+
+
+
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
