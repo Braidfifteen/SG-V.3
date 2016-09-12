@@ -1,5 +1,6 @@
 import pygame as pg
 import constants as c
+from guns import Gun
 
 
 class Player(pg.sprite.DirtySprite):
@@ -13,19 +14,24 @@ class Player(pg.sprite.DirtySprite):
         self.stats = PlayerStats(self)
         self.logic = PlayerLogic()
         self.velocity = [0, 0]
+        self.gun = Gun(self)
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN:
             if event.key in c.CONTROLS:
                 direction = c.CONTROLS[event.key]
                 self.velocity = c.DIRECT_DICT[direction]
-        elif event.type == pg.KEYUP:
+        if event.type == pg.KEYUP:
             self.velocity = [0, 0]
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            self.gun.is_shooting = True
+        elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
+            self.gun.is_shooting = False
     
-    def update(self, walls):
+    def update(self, walls, dt):
         self.move_player(walls)
-
-    
+        self.gun.update(dt)
+   
     def move_player(self, walls):
         old_pos = self.rect.topleft
         move = self.velocity[0] * self.stats.speed, self.velocity[1] * self.stats.speed
@@ -68,16 +74,6 @@ class PlayerStats():
         pass
         
         
-class Guns():
-    def __init__(self, player):
-        self.player = player
-        self.shot_timer = 0
-        self.stats()
-        
-    def stats(self):
-        self.damage = 10
-        self.shot_cooldown = 100
-        self.ammo = 100
         
 class PlayerLogic():
     def __init(self):

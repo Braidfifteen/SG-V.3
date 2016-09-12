@@ -2,7 +2,7 @@ import pygame as pg
 import prepare as p
 import constants as c
 from rooms import Room
-from playerinfo import Player
+from player import Player
 from generate_floors import GenerateFloor
 import random
 
@@ -20,12 +20,13 @@ class GameApp():
     def new_game(self):
         """Initializes a new game."""
         self.floor = GenerateFloor()
+        self.all_sprites = pg.sprite.LayeredDirty()        
         self.player = Player(self, self.screen_rect.center, (16, 16))
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
         
-        self.all_sprites = pg.sprite.LayeredDirty()
+
         self.background = pg.Surface(self.screen.get_size()).convert()
         self.background.fill(c.DARKGREEN)
         self.all_sprites.clear(p.WINDOW, self.background)
@@ -80,10 +81,12 @@ class GameApp():
         template = "{} - FPS: {:.2f}"
         caption = template.format(c.CAPTION, self.clock.get_fps())
         pg.display.set_caption(caption)
+
         
     def update(self, dt):
         """Update all sprites."""
-        self.player.update(self.room.wall_container)
+        self.player.update(self.room.wall_container, dt)
+        self.room.update(dt)
         for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
@@ -95,11 +98,12 @@ class GameApp():
         pg.display.update(dirty_rects)
         
     def main_loop(self):
-        self.clock.tick(self.fps)/1000.0
-        dt = 0.0
+        
         while self.game_running:
+            print(self.all_sprites)
+            self.clock.tick(self.fps)
+            dt = self.clock.get_time()
             self.event_loop()
             self.update(dt)
             self.render()
-            dt = self.clock.tick(self.fps)/1000.0
             self.display_fps()

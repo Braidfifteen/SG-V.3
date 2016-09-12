@@ -33,7 +33,7 @@ class Room():
         self.make_containers()
         self.make_doors(exits)
         self.make_borders(wall_size)
-        self.make_random_walls(wall_size)
+        #self.make_random_walls(wall_size)
         self.room_assets = RoomAssets(self)
         
     def make_borders(self, wall_size):
@@ -63,18 +63,11 @@ class Room():
                                            r.randrange(self.inner_wall_rect.h), wall_size[1])]
                                                       
         for spot in wall_list:
-            wall = Wall(spot, wall_size, self.wall_container)
-            
+            wall = Wall(spot, wall_size, self.wall_container)           
             check_if_blocks_door = pg.sprite.spritecollide(wall, self.collider_container, False)
             for i in check_if_blocks_door:
                 wall.kill()
             
-                            
-            
-            
-        
-        
-        
     def make_doors(self, exits):
         w, h = self.wall_size
         cells_wide = self.rect.w // w
@@ -99,10 +92,8 @@ class Room():
             "up": (door_spot[0], (door_spot[1] + size[1])),
             "down": (door_spot[0], (door_spot[1] - size[1]))
             }
-            
         collider.Collider(collider_dict[direction], size, self.collider_container)
-            
-         
+               
     def make_containers(self):
         self.collider_container = pg.sprite.Group()
         self.door_container = pg.sprite.Group()
@@ -113,8 +104,11 @@ class Room():
         self.teleporter_container = pg.sprite.Group()
         self.gun_container = pg.sprite.Group()
         self.powerup_container = pg.sprite.Group()
+    
+    def update(self, dt):
+        for bullet in self.bullet_container:
+            bullet.update()
         
-            
 class RoomAssets():
     def __init__(self, room):
         self.room = room
