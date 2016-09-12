@@ -2,7 +2,7 @@ import pygame as pg
 import prepare as p
 import constants as c
 from rooms import Room
-import spriteclass as sc
+from player import Player
 from generate_floors import GenerateFloor
 import random
 
@@ -14,23 +14,31 @@ class GameApp():
         self.screen_rect = self.screen.get_rect()
         self.game_running = True
         self.clock = pg.time.Clock()
+        self.keys = pg.key.get_pressed()
+        self.fps = 60
         
     def new_game(self):
         """Initializes a new game."""
         self.floor = GenerateFloor()
-        self.player = sc.Player(self, self.screen_rect.center, (16, 16), c.GOLD)
+        self.all_sprites = pg.sprite.LayeredDirty()        
+        self.player = Player(self, self.screen_rect.center, (16, 16))
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
         
-        self.all_sprites = pg.sprite.LayeredDirty()
+
         self.background = pg.Surface(self.screen.get_size()).convert()
-        self.background.fill(c.DARKSLATEGREY)
+        self.background.fill(c.DARKGREEN)
         self.all_sprites.clear(p.WINDOW, self.background)
-        self.all_sprites.add(self.room.walls, self.room.doors, self.player)
+        self.all_sprites.add(self.room.wall_container, self.room.door_container,
+                             self.room.collider_container, self.player)
         
         self.main_loop()
-    
+        
+    def start_new_game(self, key):
+        if key == pg.K_r:
+            self.new_game()
+            
     def make_rooms(self):
         room_size = c.SCREEN_SIZE
         wall_size = c.TILE_SIZE
@@ -50,7 +58,8 @@ class GameApp():
         self.player.rect.topleft = arrival_spots[door.direction]
         self.room = room
         self.all_sprites.empty()
-        self.all_sprites.add(self.room.walls, self.room.doors, self.player)
+        self.all_sprites.add(self.room.wall_container, self.room.door_container,
+                             self.room.collider_container, self.player)
         
     def event_loop(self):
         """
@@ -58,11 +67,13 @@ class GameApp():
         Sends events to player so they can also process events.
         """
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
                 self.game_running = False
-            elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_r:
-                    self.new_game()
+            if event.type == pg.KEYDOWN:
+                self.keys = pg.key.get_pressed()
+                self.start_new_game(event.key)
+            if event.type == pg.KEYUP:
+                self.keys = pg.key.get_pressed()
             self.player.get_event(event)
              
     def display_fps(self):
@@ -70,11 +81,13 @@ class GameApp():
         template = "{} - FPS: {:.2f}"
         caption = template.format(c.CAPTION, self.clock.get_fps())
         pg.display.set_caption(caption)
+
         
-    def update(self):
+    def update(self, dt):
         """Update all sprites."""
-        self.player.update(self.room)
-        for door in self.room.doors:
+        self.player.update(self.room.wall_container, dt)
+        self.room.update(dt)
+        for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
                 break
@@ -85,9 +98,12 @@ class GameApp():
         pg.display.update(dirty_rects)
         
     def main_loop(self):
+        
         while self.game_running:
+            print(self.all_sprites)
+            self.clock.tick(self.fps)
+            dt = self.clock.get_time()
             self.event_loop()
-            self.update()
+            self.update(dt)
             self.render()
-            self.clock.tick(c.FPS)
             self.display_fps()
