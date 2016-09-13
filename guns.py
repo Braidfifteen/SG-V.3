@@ -33,6 +33,9 @@ class Bullet(pg.sprite.DirtySprite):
             self.rect.y > c.SCREEN_SIZE[1]:
             self.kill()
             
+    def calculate_bullet_range(self):
+        pass
+        
             
 class Gun():
     def __init__(self, player):
@@ -40,13 +43,12 @@ class Gun():
         self.damage = 10
         self.fire_rate = 400
         self.ammo_capacity = 50
-        self.range = 90
+        self.range = 700
         self.is_shooting = False
         self.fire_rate_timer = 0
         
     def update(self, dt):
         self.fire_rate_timer += dt
-        print(self.fire_rate_timer)
         if self.is_shooting and self.fire_rate_timer >= self.fire_rate:
             pos = pg.mouse.get_pos()
             mouse_x = pos[0]
