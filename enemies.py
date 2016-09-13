@@ -10,7 +10,7 @@ class Enemies(pg.sprite.DirtySprite):
     def __init__(self, game, player, pos, size, *groups):
         super().__init__(*groups)
         self.image = pg.Surface(size).convert()
-        self.image.fill(c.RED)
+        self.image.fill(c.SILVER)
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.player = player
@@ -19,7 +19,7 @@ class Enemies(pg.sprite.DirtySprite):
         self.damage = 10
         self.dirty = 1
         self.health_bar = HealthBar(self, (self.health, 15), (self.rect.center[0]-50,
-                          self.rect.center[1]-30))
+                          self.rect.center[1]-30), c.RED)
         self.dead = False
         self.health_timer_on = False
         self.health_timer = 0    

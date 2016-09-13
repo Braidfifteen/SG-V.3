@@ -2,11 +2,11 @@ import pygame as pg
 import constants as c
 
 class HealthBar(pg.sprite.DirtySprite):
-    def __init__(self, actor, size, pos, *groups):
+    def __init__(self, actor, size, pos, color, *groups):
         super().__init__(*groups)
         self.size = size
         self.image = pg.Surface(self.size).convert()
-        self.image.fill(c.BLUE)
+        self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.actor = actor

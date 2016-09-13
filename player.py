@@ -13,7 +13,8 @@ class Player(pg.sprite.DirtySprite):
         self.room = None
         self.game = game
         self.stats = PlayerStats(self)        
-        self.health_bar = HealthBar(self, (self.stats.health, 25), (50, 50), self.game.all_sprites)
+        self.health_bar = HealthBar(self, (self.stats.health, 25), (50, 50),
+                                    c.BLUE, self.game.all_sprites)
         self.logic = PlayerLogic()
         self.velocity = [0, 0]
         self.gun = Gun(self)
