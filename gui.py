@@ -10,12 +10,17 @@ class HealthBar(pg.sprite.DirtySprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.actor = actor
+        self.dirty = 2
+        self.move = 0
         
     def update(self, health, dead):
-        self.dirty = 1
         if dead == False:        
             if health > 0:
+                topleft = self.rect.topleft
                 self.image = pg.transform.scale(self.image, (health, self.size[1]))
+                self.rect = self.image.get_rect()
+                self.rect.topleft = topleft
+
         elif dead == True:
             self.kill()
             

@@ -23,9 +23,11 @@ class Enemies(pg.sprite.DirtySprite):
         self.dead = False
         self.health_timer_on = False
         self.health_timer = 0    
-
+        self.move = 0
         
     def update(self, room, dt):
+        self.move *= 0.8
+        self.health_bar.rect.y -= self.move
         if not self.dead:       
             self.health_timer_start(dt)
             bullet_hit = pg.sprite.spritecollide(self, room.bullet_container, True)
@@ -33,7 +35,8 @@ class Enemies(pg.sprite.DirtySprite):
                 self.health_timer = 0
                 self.health_timer_on = True
                 self.game.all_sprites.add(self.health_bar)
-                self.health_bar.update(self.health, self.dead)      
+                self.health_bar.update(self.health, self.dead)
+                self.move = 12
                 self.health -= bullet.gun.damage
                 bullet.kill()
             if self.health <= 0:
@@ -44,9 +47,14 @@ class Enemies(pg.sprite.DirtySprite):
     def health_timer_start(self, dt):
         if self.health_timer_on == True:
             self.health_timer += dt
-            if self.health_timer >= 1000:
+            if self.health_timer >= 500:
                 self.health_bar.remove(self.game.all_sprites)
                 self.health_timer_on = False
                 self.health_timer = 0
+                self.move = 0
+                self.health_bar.rect.y = self.rect.center[1]-30
+                self.health_bar.rect.centerx = self.rect.centerx
+
+                
 
             
