@@ -40,7 +40,7 @@ class Bullet(pg.sprite.DirtySprite):
 class Gun():
     def __init__(self, player):
         self.player = player
-        self.damage = 10
+        self.damage = 6
         self.fire_rate = 400
         self.ammo_capacity = 50
         self.range = 700

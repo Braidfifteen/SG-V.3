@@ -13,13 +13,9 @@ class HealthBar(pg.sprite.DirtySprite):
         
     def update(self, health, dead):
         self.dirty = 1
-        """
-
-        elif health >= 0:
-            self.kill()
-        """
         if dead == False:        
             if health > 0:
-                self.image = pg.transform.scale(self.image, (health, 10))
+                self.image = pg.transform.scale(self.image, (health, self.size[1]))
         elif dead == True:
             self.kill()
+            

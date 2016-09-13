@@ -89,7 +89,7 @@ class GameApp():
         """Update all sprites."""
         self.player.update(self.room.wall_container, dt)
         self.room.update(dt)
-        self.enemy.update(self.room)
+        self.enemy.update(self.room, dt)
         for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
@@ -103,7 +103,6 @@ class GameApp():
     def main_loop(self):
         
         while self.game_running:
-            print(self.room.enemy_container)
             self.clock.tick(self.fps)
             dt = self.clock.get_time()
             self.event_loop()

@@ -4,8 +4,7 @@ import constants as c
 from gui import HealthBar
 
             
-
-        
+     
 class Enemies(pg.sprite.DirtySprite):
     """Basic enemy class."""
     def __init__(self, game, player, pos, size, *groups):
@@ -19,23 +18,36 @@ class Enemies(pg.sprite.DirtySprite):
         self.health = 100
         self.damage = 10
         self.dirty = 1
-        self.health_bar = HealthBar(self, (self.health, 15), (self.rect.center[0]-10,
-                          self.rect.center[1]-10), self.game.all_sprites)
+        self.health_bar = HealthBar(self, (self.health, 15), (self.rect.center[0]-50,
+                          self.rect.center[1]-30))
         self.dead = False
-        
-    def update(self, room):
-        self.health_bar.update(self.health, self.dead)       
-        if self.dead == False:
+        self.health_timer_on = False
+        self.health_timer = 0    
 
+        
+    def update(self, room, dt):
+
+        if not self.dead:       
+            self.health_timer_start(dt)
             bullet_hit = pg.sprite.spritecollide(self, room.bullet_container, True)
             for bullet in bullet_hit:
+                self.health_timer = 0
+                self.health_timer_on = True
+                self.game.all_sprites.add(self.health_bar)
+                self.health_bar.update(self.health, self.dead)      
                 self.health -= bullet.gun.damage
                 bullet.kill()
             if self.health <= 0:
                 self.kill()
                 self.dead = True
-        
-        
-        
-    
-        
+                self.health_bar.kill()
+
+    def health_timer_start(self, dt):
+        if self.health_timer_on == True:
+            self.health_timer += dt
+            if self.health_timer >= 1000:
+                self.health_bar.remove(self.game.all_sprites)
+                self.health_timer_on = False
+                self.health_timer = 0
+
+            

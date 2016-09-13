@@ -37,6 +37,7 @@ class Player(pg.sprite.DirtySprite):
         self.health_bar.update(self.stats.health, self.dead)        
         if self.stats.health <= 0:
             self.kill()
+            self.dead = True
         self.move_player(walls)
         self.gun.update(dt)
    
