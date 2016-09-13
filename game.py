@@ -6,6 +6,7 @@ from player import Player
 from enemies import Enemies
 from generate_floors import GenerateFloor
 import random
+from gui import DrawText
 
 
 class GameApp():
@@ -28,12 +29,12 @@ class GameApp():
         self.room = self.rooms[self.starting_room]
         self.enemy = Enemies(self, self.player, (200, 200), (20, 20), self.all_sprites,
                              self.room.enemy_container)
-
+        self.player_gui = DrawText(self.player, (self.screen_rect.midtop))
         self.background = pg.Surface(self.screen.get_size()).convert()
         self.background.fill(c.DARKGREEN)
         self.all_sprites.clear(p.WINDOW, self.background)
         self.all_sprites.add(self.room.wall_container, self.room.door_container,
-                             self.room.collider_container, self.player)
+                             self.room.collider_container, self.player, self.player_gui)
         
         self.main_loop()
         
@@ -90,6 +91,7 @@ class GameApp():
         self.player.update(self.room.wall_container, dt)
         self.room.update(dt)
         self.enemy.update(self.room, dt)
+        self.player_gui.update(str(self.player.gun.ammo))
         for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)

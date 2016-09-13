@@ -16,7 +16,7 @@ class Bullet(pg.sprite.DirtySprite):
         x_diff = dest_x - start_x
         y_diff = dest_y - start_y
         angle = math.atan2(y_diff, x_diff)
-        velocity = 30
+        velocity = 2.5
         self.moveX = math.cos(angle) * velocity
         self.moveY = math.sin(angle) * velocity
         self.gun = gun
@@ -42,6 +42,7 @@ class Gun():
         self.player = player
         self.damage = 6
         self.fire_rate = 400
+        self.ammo = 50
         self.ammo_capacity = 50
         self.range = 700
         self.is_shooting = False
@@ -49,13 +50,15 @@ class Gun():
         
     def update(self, dt):
         self.fire_rate_timer += dt
-        if self.is_shooting and self.fire_rate_timer >= self.fire_rate:
+        if self.is_shooting and self.fire_rate_timer >= self.fire_rate and \
+                self.ammo > 0:
             pos = pg.mouse.get_pos()
             mouse_x = pos[0]
             mouse_y = pos[1]
             bullet = Bullet(self, self.player.rect.center[0], self.player.rect.center[1],
                             mouse_x, mouse_y, self.player.game.room.bullet_container,
                             self.player.game.all_sprites)
+            self.ammo -= 1
             self.fire_rate_timer = 0
             
             

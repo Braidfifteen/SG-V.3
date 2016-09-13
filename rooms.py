@@ -34,7 +34,7 @@ class Room():
         self.make_doors(exits)
         self.make_borders(wall_size)
         #self.make_random_walls(wall_size)
-        self.room_assets = RoomAssets(self)
+        self.room_assets = None
         
     def make_borders(self, wall_size):
         door_toplefts = [door.rect.topleft for door in self.door_container]        
@@ -104,6 +104,7 @@ class Room():
         self.teleporter_container = pg.sprite.Group()
         self.gun_container = pg.sprite.Group()
         self.powerup_container = pg.sprite.Group()
+        self.health_bar_container = pg.sprite.Group()
     
     def update(self, dt):
         for bullet in self.bullet_container:

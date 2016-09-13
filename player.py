@@ -25,8 +25,6 @@ class Player(pg.sprite.DirtySprite):
             if event.key in c.CONTROLS:
                 direction = c.CONTROLS[event.key]
                 self.velocity = c.DIRECT_DICT[direction]
-            elif event.key == pg.K_t:
-                self.stats.health -= 10
         if event.type == pg.KEYUP:
             self.velocity = [0, 0]
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
@@ -63,11 +61,26 @@ class Player(pg.sprite.DirtySprite):
                 self.rect.top = wall.rect.bottom
             break
             
+    def ammo_pickup(self, amount):
+        if amount + self.gun.ammo <= self.gun.ammo_capacity:
+            self.gun.ammo += amount
+        else:
+            self.gun.ammo = self.gun.ammo_capacity
+            
+    def health_pickup(self, amount):
+        if amount + self.stats.health <= self.stats.health_capacity:
+            self.stats.health += amount
+        else:
+            self.stats.health = self.stats.health_capacity
+        
+        
+        
             
 class PlayerStats():
     def __init__(self, player):
         self.player = player
         self.health = 100
+        self.health_capacity = 100
         self.speed = 5
         self.damage_multiplier = 0
         self.luck = 0
