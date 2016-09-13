@@ -26,7 +26,6 @@ class Enemies(pg.sprite.DirtySprite):
 
         
     def update(self, room, dt):
-
         if not self.dead:       
             self.health_timer_start(dt)
             bullet_hit = pg.sprite.spritecollide(self, room.bullet_container, True)
