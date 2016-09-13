@@ -3,6 +3,7 @@ import prepare as p
 import constants as c
 from rooms import Room
 from player import Player
+from enemies import Enemies
 from generate_floors import GenerateFloor
 import random
 
@@ -25,7 +26,8 @@ class GameApp():
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
-        
+        self.enemy = Enemies(self, self.player, (200, 200), (20, 20), self.all_sprites,
+                             self.room.enemy_container)
 
         self.background = pg.Surface(self.screen.get_size()).convert()
         self.background.fill(c.DARKGREEN)
@@ -87,6 +89,7 @@ class GameApp():
         """Update all sprites."""
         self.player.update(self.room.wall_container, dt)
         self.room.update(dt)
+        self.enemy.update(self.room, dt)
         for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)
@@ -100,7 +103,6 @@ class GameApp():
     def main_loop(self):
         
         while self.game_running:
-            print(self.all_sprites)
             self.clock.tick(self.fps)
             dt = self.clock.get_time()
             self.event_loop()

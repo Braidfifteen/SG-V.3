@@ -1,8 +1,9 @@
 import pygame as pg
 import constants as c
 from guns import Gun
+from gui import HealthBar
 
-
+        
 class Player(pg.sprite.DirtySprite):
     def __init__(self, game, pos, size, *groups):
         super().__init__(*groups)
@@ -11,16 +12,20 @@ class Player(pg.sprite.DirtySprite):
         self.rect = self.image.get_rect(center=pos)
         self.room = None
         self.game = game
-        self.stats = PlayerStats(self)
+        self.stats = PlayerStats(self)        
+        self.health_bar = HealthBar(self, (self.stats.health, 25), (50, 50), self.game.all_sprites)
         self.logic = PlayerLogic()
         self.velocity = [0, 0]
         self.gun = Gun(self)
+        self.dead = False
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN:
             if event.key in c.CONTROLS:
                 direction = c.CONTROLS[event.key]
                 self.velocity = c.DIRECT_DICT[direction]
+            elif event.key == pg.K_t:
+                self.stats.health -= 10
         if event.type == pg.KEYUP:
             self.velocity = [0, 0]
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
@@ -29,6 +34,10 @@ class Player(pg.sprite.DirtySprite):
             self.gun.is_shooting = False
     
     def update(self, walls, dt):
+        self.health_bar.update(self.stats.health, self.dead)        
+        if self.stats.health <= 0:
+            self.kill()
+            self.dead = True
         self.move_player(walls)
         self.gun.update(dt)
    
