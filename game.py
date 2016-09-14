@@ -18,23 +18,28 @@ class GameApp():
         self.clock = pg.time.Clock()
         self.keys = pg.key.get_pressed()
         self.fps = 60
+       
+        
         
     def new_game(self):
         """Initializes a new game."""
+        self.background = pg.Surface(self.screen.get_size()).convert()
+        self.background.fill(c.DARKGREEN)         
+  
         self.floor = GenerateFloor()
-        self.all_sprites = pg.sprite.LayeredDirty()        
+        self.all_sprites = pg.sprite.LayeredDirty()     
+        self.all_sprites.clear(p.WINDOW, self.background)              
         self.player = Player(self, self.screen_rect.center, (16, 16))
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
-        self.enemy = Enemies(self, self.player, (500, 300), (20, 20), self.all_sprites,
-                             self.room.enemy_container)
         self.player_gui = DrawText(self.player, (self.screen_rect.midtop))
-        self.background = pg.Surface(self.screen.get_size()).convert()
-        self.background.fill(c.DARKGREEN)
-        self.all_sprites.clear(p.WINDOW, self.background)
+ 
+
+
         self.all_sprites.add(self.room.wall_container, self.room.door_container,
-                             self.room.collider_container, self.player, self.player_gui)
+                             self.room.collider_container, self.player, self.player_gui,
+                             self.room.enemy_container)
         
         self.main_loop()
         
@@ -48,7 +53,8 @@ class GameApp():
         self.rooms = {}
         for room_number in self.floor.rooms_on_floor:
             exits = self.floor.floor_dict[room_number]
-            self.rooms[room_number] = Room(room_number, (0, 0), exits, room_size, wall_size)
+            self.rooms[room_number] = Room(room_number, (0, 0), exits, room_size, wall_size, self,
+            self.player)
             
     def change_room(self, door):
         room = self.rooms[door.exit_to]
@@ -62,7 +68,7 @@ class GameApp():
         self.room = room
         self.all_sprites.empty()
         self.all_sprites.add(self.room.wall_container, self.room.door_container,
-                             self.room.collider_container, self.player)
+                             self.room.collider_container, self.player, self.room.enemy_container)
         
     def event_loop(self):
         """
@@ -90,7 +96,6 @@ class GameApp():
         """Update all sprites."""
         self.player.update(self.room.wall_container, dt)
         self.room.update(dt)
-        self.enemy.update(self.room, dt)
         self.player_gui.update(str(self.player.gun.ammo))
         for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):

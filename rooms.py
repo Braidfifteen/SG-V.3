@@ -3,8 +3,11 @@ import prepare
 import constants as c
 import collider
 import random as r
+from enemies import Enemies
 
 
+
+    
 class Wall(pg.sprite.DirtySprite):
     image = pg.Surface(c.TILE_SIZE)
     image.fill(c.DARKRED)
@@ -14,6 +17,9 @@ class Wall(pg.sprite.DirtySprite):
         self.rect = self.image.get_rect(topleft=topleft)
         self.dirty = 1
         
+        
+class SetupRoom():
+    
         
 class Door(pg.sprite.DirtySprite):
     def __init__(self, room_number, direction, topleft, size, *groups):
@@ -27,14 +33,16 @@ class Door(pg.sprite.DirtySprite):
 
         
 class Room():
-    def __init__(self, room_number, topleft, exits, room_size, wall_size):
+    def __init__(self, room_number, topleft, exits, room_size, wall_size, game, player):
         self.rect = pg.Rect(topleft, room_size)
         self.wall_size = wall_size
         self.make_containers()
         self.make_doors(exits)
         self.make_borders(wall_size)
+        self.game = game
+        self.player = player
+        self.assets = RoomAssets(self, self.game, self.player)
         #self.make_random_walls(wall_size)
-        self.room_assets = None
         
     def make_borders(self, wall_size):
         door_toplefts = [door.rect.topleft for door in self.door_container]        
@@ -94,7 +102,7 @@ class Room():
             }
         collider.Collider(collider_dict[direction], size, self.collider_container)
                
-    def make_containers(self):
+    def make_containers(self): 
         self.collider_container = pg.sprite.Group()
         self.door_container = pg.sprite.Group()
         self.wall_container = pg.sprite.Group()
@@ -109,13 +117,19 @@ class Room():
     def update(self, dt):
         for bullet in self.bullet_container:
             bullet.update()
+        self.assets.update(dt)
         
 class RoomAssets():
-    def __init__(self, room):
+    def __init__(self, room, game, player):
+        self.player = player
         self.room = room
-        self.teleporter = None
+        self.game = game
+        self.teleporter = None  
         self.pickups = None
         self.powerups = None
         self.guns = None
-        self.enemies = None
+        self.enemies = Enemies(self.game, self.player, (500, 300), (20, 20),
+                                self.room.enemy_container)
         
+    def update(self, dt):
+        self.enemies.update(self.room, dt)
