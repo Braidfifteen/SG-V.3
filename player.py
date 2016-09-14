@@ -18,7 +18,7 @@ class Player(pg.sprite.DirtySprite):
         self.logic = PlayerLogic()
         self.velocity = [0, 0]
         self.gun = Gun(self)
-        self.dead = False
+        self.is_dead = False
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN:
@@ -33,10 +33,10 @@ class Player(pg.sprite.DirtySprite):
             self.gun.is_shooting = False
     
     def update(self, walls, dt):
-        self.health_bar.update(self.stats.health, self.dead)        
+        self.health_bar.update(self.stats.health)        
         if self.stats.health <= 0:
             self.kill()
-            self.dead = True
+            self.is_dead = True
         self.move_player(walls)
         self.gun.update(dt)
    

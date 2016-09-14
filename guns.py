@@ -1,6 +1,7 @@
 import pygame as pg
 import math
 import constants as c
+import random
 
 
 class Bullet(pg.sprite.DirtySprite):
@@ -9,6 +10,9 @@ class Bullet(pg.sprite.DirtySprite):
         self.image = pg.Surface((3, 3)).convert()
         self.image.fill(c.DARKVIOLET)
         self.rect = self.image.get_rect()
+        self.gun = gun
+        self.start_x = start_x
+        self.start_y = start_y
         self.rect.x = start_x
         self.rect.y = start_y
         self.floating_point_x = start_x
@@ -16,10 +20,10 @@ class Bullet(pg.sprite.DirtySprite):
         x_diff = dest_x - start_x
         y_diff = dest_y - start_y
         angle = math.atan2(y_diff, x_diff)
-        velocity = 2.5
-        self.moveX = math.cos(angle) * velocity
-        self.moveY = math.sin(angle) * velocity
-        self.gun = gun
+        self.velocity = self.gun.bullet_velocity
+        self.moveX = math.cos(angle) * self.velocity
+        self.moveY = math.sin(angle) * self.velocity
+        self.distance_from_start = None
         
     def update(self):
         old_pos = self.rect.topleft
@@ -29,24 +33,29 @@ class Bullet(pg.sprite.DirtySprite):
         self.rect.y = int(self.floating_point_y)
         if self.rect.topleft != old_pos:
             self.dirty = 1
+        self.calculate_bullet_range(self.rect.x, self.rect.y)
         if self.rect.x < 0 or self.rect.x > c.SCREEN_SIZE[0] or self.rect.y < 0 or \
             self.rect.y > c.SCREEN_SIZE[1]:
             self.kill()
             
-    def calculate_bullet_range(self):
-        pass
+    def calculate_bullet_range(self, current_x, current_y):
+        x_diff = current_x - self.start_x
+        y_diff = current_y - self.start_y
+        dist_from_start = math.sqrt(x_diff**2 + y_diff**2)
+        if dist_from_start >= self.gun.range:
+            self.kill()
         
-            
 class Gun():
     def __init__(self, player):
         self.player = player
         self.damage = 6
-        self.fire_rate = 400
+        self.fire_rate = 300
         self.ammo = 50
         self.ammo_capacity = 50
-        self.range = 700
+        self.range = 200
         self.is_shooting = False
         self.fire_rate_timer = 0
+        self.bullet_velocity = 5
         
     def update(self, dt):
         self.fire_rate_timer += dt

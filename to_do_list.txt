@@ -1,0 +1,5 @@
+- reset healthbar counter to 0 on room change
+- seperate player and enemy healthbar classes
+- add health_bar container to enemy class instead of room class.
+- add something for overkilling enemies
+- gun wont shoot at beginning of level with a high timer. set to if len(bullet_container) == 0: shooting is okay.

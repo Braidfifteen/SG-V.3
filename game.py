@@ -27,7 +27,7 @@ class GameApp():
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
-        self.enemy = Enemies(self, self.player, (200, 200), (20, 20), self.all_sprites,
+        self.enemy = Enemies(self, self.player, (500, 300), (20, 20), self.all_sprites,
                              self.room.enemy_container)
         self.player_gui = DrawText(self.player, (self.screen_rect.midtop))
         self.background = pg.Surface(self.screen.get_size()).convert()
