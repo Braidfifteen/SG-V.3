@@ -33,13 +33,12 @@ class GameApp():
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
-        self.player_gui = DrawText(self.player, (self.screen_rect.midtop))
+        DrawText(self.player, (self.screen_rect.midtop))
  
 
 
-        self.all_sprites.add(self.room.wall_container, self.room.door_container,
-                             self.room.collider_container, self.player, self.player_gui,
-                             self.room.enemy_container)
+        self.all_sprites.add(self.room.make_all_sprites_container(),
+                             self.player.all_sprites_container)
         
         self.main_loop()
         
@@ -67,8 +66,8 @@ class GameApp():
         self.player.rect.topleft = arrival_spots[door.direction]
         self.room = room
         self.all_sprites.empty()
-        self.all_sprites.add(self.room.wall_container, self.room.door_container,
-                             self.room.collider_container, self.player, self.room.enemy_container)
+        self.all_sprites.add(self.room.make_all_sprites_container(),
+                             self.player.all_sprites_container)
         
     def event_loop(self):
         """
@@ -96,7 +95,6 @@ class GameApp():
         """Update all sprites."""
         self.player.update(self.room.wall_container, dt)
         self.room.update(dt)
-        self.player_gui.update(str(self.player.gun.ammo))
         for door in self.room.door_container:
             if self.player.rect.colliderect(door.rect):
                 self.change_room(door)

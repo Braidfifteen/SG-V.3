@@ -52,13 +52,13 @@ class Gun():
         self.player = player
         self.damage = 6
         self.fire_rate = 300
-        self.ammo = 500000
+        self.ammo = 50
         self.ammo_capacity = 50
         self.range = 200
         self.is_shooting = False
         self.fire_rate_timer = self.fire_rate
         self.bullet_velocity = 5
-        self.automatic = True
+        self.automatic = False
         self.reload_timer = 0
         self.reload_time = 0
         self.bullet_size = (3, 3)
@@ -74,7 +74,7 @@ class Gun():
                 self.find_mouse_pos_and_shoot()
                 self.fire_rate_timer = 0                  
         else:
-            if self.is_shooting:
+            if self.is_shooting and self.ammo > 0:
                 self.find_mouse_pos_and_shoot()
                 self.is_shooting = False
 

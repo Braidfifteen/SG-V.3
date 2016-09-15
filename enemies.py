@@ -40,7 +40,5 @@ class Enemies(pg.sprite.DirtySprite):
                     bullet.kill()
         else:
             self.kill()
-            for i in room.health_bar_container:
-                i.kill()
-
+            room.health_bar_container.update(self.health)
         
