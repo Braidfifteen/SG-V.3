@@ -2,6 +2,7 @@ import pygame as pg
 import constants as c
 from guns import Gun
 from gui import HealthBar, DrawText
+from math import sqrt
 
         
 class Player(pg.sprite.DirtySprite):
@@ -18,26 +19,20 @@ class Player(pg.sprite.DirtySprite):
         self.all_sprites_container.add(self)
         self.gui = PlayerGui(self)
         self.logic = PlayerLogic(self)
-        self.velocity = [0, 0]
         self.is_dead = False
 
     def get_event(self, event):
         if event.type == pg.KEYDOWN:
-            if event.key in c.CONTROLS:
-                direction = c.CONTROLS[event.key]
-                self.velocity = c.DIRECT_DICT[direction]
-            if event.key == pg.K_v:
+            if event.key == pg.K_r:
                 self.logic.reload_gun()
-        if event.type == pg.KEYUP:
-            self.velocity = [0, 0]
         if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
             self.gun.is_shooting = True
         elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
             self.gun.is_shooting = False
     
-    def update(self, walls, enemies, dt):      
+    def update(self, keys, walls, enemies, dt):      
         self.check_if_dead()
-        self.logic.update(walls, enemies, dt)
+        self.logic.update(keys, walls, enemies, dt)
         self.gun.update(dt)
         self.gui.update()
    
@@ -97,18 +92,40 @@ class PlayerLogic():
         self.gun = self.player.gun
         #self.room = self.player.game.room
         self.setup_health_logic()
+
         
+    def ammo_pickup(self, amount):
+        if amount + self.gun.ammo <= self.gun.ammo_capacity:
+            self.gun.ammo += amount
+        else:
+            self.gun.ammo = self.gun.ammo_capacity
+        
+    def health_pickup(self, amount):
+        if amount + self.stats.health <= self.stats.health_capacity:
+            self.stats.health += amount
+        else:
+            self.stats.health = self.stats.health_capacity
+            
     def setup_health_logic(self):
         self.health_timer = 401
         self.health_down_speed = 400
         
-    def move_player(self, walls, enemies):
+    def move_player(self, keys, walls, enemies):
         old_pos = self.player.rect.topleft
-        direction_moved = self.player.velocity[0] * self.stats.speed, \
-            self.player.velocity[1] * self.stats.speed
-        self.player.rect.move_ip(direction_moved)
-        self.handle_wall_collision(direction_moved, walls)
-        self.handle_enemy_collision(direction_moved, enemies)
+        self.velocity = [0, 0]
+        for key in c.CONTROLS:
+            if keys[key]:
+                self.velocity[0] += c.CONTROLS[key][0]
+                self.velocity[1] += c.CONTROLS[key][1]
+                if all(self.velocity):
+                    self.velocity[0] /= sqrt(2)
+                    self.velocity[1] /= sqrt(2) 
+        self.player.rect.x += (self.velocity[0] * self.stats.speed)
+        self.handle_wall_collision(self.velocity, walls)  
+        self.handle_enemy_collision(self.velocity, enemies)        
+        self.player.rect.y += (self.velocity[1] * self.stats.speed)
+        self.handle_wall_collision(self.velocity, walls)     
+        self.handle_enemy_collision(self.velocity, enemies)        
         if self.player.rect.topleft != old_pos:
             self.player.dirty = 1    
             
@@ -152,8 +169,8 @@ class PlayerLogic():
             
             
             
-    def update(self, walls, enemies, dt):
-        self.move_player(walls, enemies)
-        
+    def update(self,keys, walls, enemies, dt):
+        self.move_player(keys, walls, enemies)
+
 
         

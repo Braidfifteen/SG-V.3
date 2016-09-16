@@ -59,15 +59,18 @@ class ChasingEnemy(Enemies):
         vx = self.player.rect.x - self.rect.x
         vy = self.player.rect.y - self.rect.y
         dist_from_player = sqrt(vx**2 + vy**2)
-        vx = vx / dist_from_player
-        vy = vy / dist_from_player
+        vx /= dist_from_player
+        vy /= dist_from_player
+        if all([vx, vy]):
+            vx /= sqrt(2)
+            vy /= sqrt(2)
         return [vx, vy]
 
     def move_towards_player(self, vector):
         if self.alive():
             old_pos = self.rect.center
-            self.rect.x += int(vector[0] * self.speed)
-            self.rect.y += int(vector[1] * self.speed)
+            self.rect.x += (vector[0] * self.speed)
+            self.rect.y += (vector[1] * self.speed)
             if self.rect.center != old_pos:
                 self.dirty = 1
         

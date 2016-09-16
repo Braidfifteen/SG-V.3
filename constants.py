@@ -1,5 +1,4 @@
 import pygame as pg
-import math
 
 SCREEN_SIZE = (1024, 768)
 TILE_SIZE = (32, 32)
@@ -11,17 +10,11 @@ DIRECT_DICT = {"UP": (0, -1),
                "DOWN": (0, 1),
                "LEFT": (-1, 0)}
                
-CONTROLS = {pg.K_w: "UP", 
-            pg.K_d: "RIGHT",
-            pg.K_s: "DOWN",
-            pg.K_a: "LEFT"
-           }
+CONTROLS = {pg.K_w : (0, -1),
+            pg.K_d : (1, 0),
+            pg.K_s : (0, 1),
+            pg.K_a : (-1, 0)}
            
-ANGLE_UNIT_SPEED = math.sqrt(2)/2
-
-
-
-
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)

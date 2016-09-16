@@ -35,7 +35,7 @@ class GameApp():
         self.main_loop()
         
     def start_new_game(self, key):
-        if key == pg.K_r:
+        if key == pg.K_RETURN:
             self.new_game()
             
     def make_rooms(self):
@@ -93,7 +93,7 @@ class GameApp():
 
     def update(self, walls, enemies, dt):
         """Update all sprites."""
-        self.player.update(walls, enemies, dt)
+        self.player.update(self.keys, walls, enemies, dt)
         self.room.update(dt)
         self.check_if_doors_locked()
         
