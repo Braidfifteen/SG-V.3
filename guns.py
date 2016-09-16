@@ -51,14 +51,14 @@ class Gun():
     def __init__(self, player):
         self.player = player
         self.damage = 6
-        self.fire_rate = 300
-        self.ammo = 50
+        self.fire_rate = 100
+        self.ammo = 50000
         self.ammo_capacity = 50
         self.range = 200
         self.is_shooting = False
         self.fire_rate_timer = self.fire_rate
         self.bullet_velocity = 5
-        self.automatic = False
+        self.automatic = True
         self.reload_timer = 0
         self.reload_time = 0
         self.bullet_size = (3, 3)

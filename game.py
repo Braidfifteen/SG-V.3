@@ -66,7 +66,7 @@ class GameApp():
         self.player.rect.topleft = arrival_spots[door.direction]
         self.room = room
         self.all_sprites.empty()
-        self.all_sprites.add(self.room.make_all_sprites_container(),
+        self.all_sprites.add(self.room.all_sprites_container,
                              self.player.all_sprites_container)
         
     def event_loop(self):
@@ -89,16 +89,21 @@ class GameApp():
         template = "{} - FPS: {:.2f}"
         caption = template.format(c.CAPTION, self.clock.get_fps())
         pg.display.set_caption(caption)
-
         
+    def check_if_doors_locked(self):
+        if len(self.room.enemy_container) <= 0:
+            for door in self.room.door_container:
+                if door.door_locked_collider.alive():
+                    door.unlock_door()
+                elif self.player.rect.colliderect(door.rect):
+                    self.change_room(door)
+                    break
+
     def update(self, dt):
         """Update all sprites."""
         self.player.update(self.room.wall_container, dt)
         self.room.update(dt)
-        for door in self.room.door_container:
-            if self.player.rect.colliderect(door.rect):
-                self.change_room(door)
-                break
+        self.check_if_doors_locked()
         
     def render(self):
         """Draws all sprites to the screen."""
