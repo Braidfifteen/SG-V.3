@@ -30,7 +30,6 @@ class Door(pg.sprite.DirtySprite):
         self.image.fill(self.locked_color)
         self.dirty = 1
 
-    
     def unlock_door(self):
         self.door_locked_collider.kill()
         self.dirty = 1
@@ -40,7 +39,6 @@ class Door(pg.sprite.DirtySprite):
         self.door_locked_collider = collider.Collider(self.topleft, self.size, group)
         
         
-
 class SetupRoom():
     def __init__(self, room_number, topleft, exits, room_size, wall_size):
         self.rect = pg.Rect(topleft, room_size)

@@ -50,10 +50,13 @@ class Bullet(pg.sprite.DirtySprite):
 class Gun():
     def __init__(self, player):
         self.player = player
-        self.damage = 6
+        self.base_damage = 6
+        self.output_damage = int(self.base_damage * self.player.stats.damage_multiplier)
         self.fire_rate = 100
-        self.ammo = 50000
-        self.ammo_capacity = 50
+        self.max_ammo_capacity = 500
+        self.ammo_held = 100
+        self.clip_size = 20
+        self.clip = self.clip_size
         self.range = 200
         self.is_shooting = False
         self.fire_rate_timer = self.fire_rate
@@ -61,7 +64,8 @@ class Gun():
         self.automatic = True
         self.reload_timer = 0
         self.reload_time = 0
-        self.bullet_size = (3, 3)
+        self.bullets_per_shot = 1
+        self.bullet_size = [3, 3]
         
     def update(self, dt):
         self.check_if_shooting(dt)
@@ -70,11 +74,11 @@ class Gun():
         if self.automatic:
             self.fire_rate_timer += dt
             if self.is_shooting and self.fire_rate_timer >= self.fire_rate and \
-                    self.ammo > 0:
+                    self.clip > 0:
                 self.find_mouse_pos_and_shoot()
                 self.fire_rate_timer = 0                  
         else:
-            if self.is_shooting and self.ammo > 0:
+            if self.is_shooting and self.clip > 0:
                 self.find_mouse_pos_and_shoot()
                 self.is_shooting = False
 
@@ -85,7 +89,7 @@ class Gun():
             bullet = Bullet(self, self.player.rect.center[0], self.player.rect.center[1],
                             mouse_x, mouse_y, self.player.game.room.bullet_container,
                             self.player.game.all_sprites)        
-            self.ammo -= 1
+            self.clip -= self.bullets_per_shot
 
 
 

@@ -22,18 +22,18 @@ class Enemies(pg.sprite.DirtySprite):
         self.check_if_alive(room, dt)
 
     def check_if_alive(self, room, dt):
-        if self.health <= 0:
-            self.kill()
-            room.health_bar_container.update(self.health)
-        else:
+        if self.health > 0:
             for health_bar in room.health_bar_container:
                 health_bar.move_health_bar(dt)
-            self.handle_bullet_hit(room)
-            
+            self.handle_bullet_hit(room)            
+        else:
+            self.kill()
+            room.health_bar_container.update(self.health)
+
     def handle_bullet_hit(self, room):
         bullet_hit = pg.sprite.spritecollide(self, room.bullet_container, True)
         for bullet in bullet_hit:
-            self.health -= bullet.gun.damage
+            self.health -= bullet.gun.output_damage
             bullet.kill()
             self.handle_health_bar(room)
             

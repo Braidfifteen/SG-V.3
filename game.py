@@ -18,28 +18,20 @@ class GameApp():
         self.clock = pg.time.Clock()
         self.keys = pg.key.get_pressed()
         self.fps = 60
-       
-        
+        self.background = pg.Surface(self.screen.get_size()).convert()
+        self.background.fill(c.DARKGREEN)
         
     def new_game(self):
         """Initializes a new game."""
-        self.background = pg.Surface(self.screen.get_size()).convert()
-        self.background.fill(c.DARKGREEN)         
-  
         self.floor = GenerateFloor()
         self.all_sprites = pg.sprite.LayeredDirty()     
-        self.all_sprites.clear(p.WINDOW, self.background)              
-        self.player = Player(self, self.screen_rect.center, (16, 16))
+        self.all_sprites.clear(p.WINDOW, self.background)     
+        self.player = Player(self, self.screen_rect.center, (16, 16))             
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
-        DrawText(self.player, (self.screen_rect.midtop))
- 
-
-
         self.all_sprites.add(self.room.make_all_sprites_container(),
                              self.player.all_sprites_container)
-        
         self.main_loop()
         
     def start_new_game(self, key):
@@ -99,9 +91,9 @@ class GameApp():
                     self.change_room(door)
                     break
 
-    def update(self, dt):
+    def update(self, walls, enemies, dt):
         """Update all sprites."""
-        self.player.update(self.room.wall_container, dt)
+        self.player.update(walls, enemies, dt)
         self.room.update(dt)
         self.check_if_doors_locked()
         
@@ -111,11 +103,10 @@ class GameApp():
         pg.display.update(dirty_rects)
         
     def main_loop(self):
-        
         while self.game_running:
             self.clock.tick(self.fps)
             dt = self.clock.get_time()
             self.event_loop()
-            self.update(dt)
+            self.update(self.room.wall_container, self.room.enemy_container, dt)
             self.render()
             self.display_fps()

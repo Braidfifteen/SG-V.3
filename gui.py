@@ -75,8 +75,8 @@ class DrawText(pg.sprite.DirtySprite):
         self.player = player
         
     def update(self, text):
-        old_text = self.player.gun.ammo
-        if text != old_text:
+        old_text = self.player.gun.clip, self.player.gun.ammo_held
+        if text not in old_text:
             self.dirty = 1
-        self.image = self.font.render(text, 0, self.color)
-        self.rect = self.image.get_rect(topleft=self.position)
+            self.image = self.font.render(text, 0, self.color)
+            self.rect = self.image.get_rect(topleft=self.position)
