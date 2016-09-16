@@ -1,0 +1,22 @@
+- reset healthbar counter to 0 on room change
+- seperate player and enemy healthbar classes
+- add health_bar container to enemy class instead of room class.
+- add something for overkilling enemies
+- fadout for enemy health bars
+- create vector class to calculate angles. Will be used for shooting and gun sprite
+- handle enemyspeed when moving diagonal
+- bullet collisions for walls
+- enemy hit player logic
+- for moving enemys, when player dies the will circle around the spot in which she died
+- add bullet damage
+- add reload function when clip is out
+- fix wall hit and enemy collition logic. I don't need to repeat methods as much.
+- fix line 33 in game.py. It's sloppy.
+	-line 93 player.py
+
+****Get Game.room and player talking to eachother!!!
+
+-setup player health timer
+-setup collision between enemy and player when player isn't moving
+- fix update in draw text gui.py. not independent
+- fix pickup ammo in player.py

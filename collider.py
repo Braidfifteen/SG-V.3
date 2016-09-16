@@ -9,6 +9,6 @@ class Collider(pg.sprite.DirtySprite):
         self.image.fill(c.RED)
         self.rect = self.image.get_rect()
         self.rect.topleft = topleft
-        self.dirty = 1
+        self.dirty = 0
         self.visible = 0
         
