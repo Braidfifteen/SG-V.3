@@ -69,10 +69,10 @@ class GameApp():
         for event in pg.event.get():
             if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
                 self.game_running = False
-            if event.type == pg.KEYDOWN:
+            elif event.type == pg.KEYDOWN:
                 self.keys = pg.key.get_pressed()
                 self.start_new_game(event.key)
-            if event.type == pg.KEYUP:
+            elif event.type == pg.KEYUP:
                 self.keys = pg.key.get_pressed()
             self.player.get_event(event)
              

@@ -7,12 +7,15 @@ from enemies import ChasingEnemy
 
     
 class Wall(pg.sprite.DirtySprite):
-    image = pg.Surface(c.TILE_SIZE)
+
+    image = pg.Surface(c.TILE_SIZE).convert_alpha()
     image.fill(c.DARKRED)
     pg.draw.rect(image, c.TEAL, ((0, 0), c.TILE_SIZE), 2)
+
     def __init__(self, topleft, size, *groups):
         super().__init__(*groups)
         self.rect = self.image.get_rect(topleft=topleft)
+        self.mask = pg.mask.from_surface(Wall.image)
         self.dirty = 1
         
 
@@ -138,11 +141,13 @@ class Room(SetupRoom):
         self.pickups = None
         self.powerups = None
         self.guns = None
+        """
         self.enemies = ChasingEnemy(self.game, self.player, (500, 300), (20, 20),
                                     self.enemy_container)
+        """
         self.make_all_sprites_container()
         
     def update(self, dt):
         self.bullet_container.update()
-        self.enemies.update(self, dt)
+        #self.enemies.update(self, dt)
         

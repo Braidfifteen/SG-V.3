@@ -60,7 +60,7 @@ class Gun():
         self.range = 200
         self.is_shooting = False
         self.fire_rate_timer = self.fire_rate
-        self.bullet_velocity = 5
+        self.bullet_velocity = 10
         self.automatic = True
         self.reload_timer = 0
         self.reload_time = 0
