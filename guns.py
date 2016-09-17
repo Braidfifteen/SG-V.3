@@ -7,9 +7,10 @@ import random
 class Bullet(pg.sprite.DirtySprite):
     def __init__(self, gun, start_x, start_y, dest_x, dest_y, *groups):
         super().__init__(*groups)
-        self.image = pg.Surface(gun.bullet_size).convert()
+        self.image = pg.Surface(gun.bullet_size).convert_alpha()
         self.image.fill(c.DARKVIOLET)
         self.rect = self.image.get_rect()
+        self.mask = pg.mask.from_surface(self.image)
         self.gun = gun
         self.start_x = start_x
         self.start_y = start_y
@@ -52,12 +53,12 @@ class Gun():
         self.player = player
         self.base_damage = 6
         self.output_damage = int(self.base_damage * self.player.stats.damage_multiplier)
-        self.fire_rate = 100
+        self.fire_rate = 300
         self.max_ammo_capacity = 500
         self.ammo_held = 100
-        self.clip_size = 20
+        self.clip_size = 30
         self.clip = self.clip_size
-        self.range = 200
+        self.range = 300
         self.is_shooting = False
         self.fire_rate_timer = self.fire_rate
         self.bullet_velocity = 10
@@ -65,7 +66,7 @@ class Gun():
         self.reload_timer = 0
         self.reload_time = 0
         self.bullets_per_shot = 1
-        self.bullet_size = [3, 3]
+        self.bullet_size = [5, 5]
         
     def update(self, dt):
         self.check_if_shooting(dt)

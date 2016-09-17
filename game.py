@@ -6,7 +6,7 @@ from player import Player
 from enemies import Enemies
 from generate_floors import GenerateFloor
 import random
-from gui import DrawText
+from gui import DrawText, CrossHair
 
 
 class GameApp():
@@ -17,6 +17,8 @@ class GameApp():
         self.game_running = True
         self.clock = pg.time.Clock()
         self.keys = pg.key.get_pressed()
+        self.mouse = pg.mouse.get_pos()
+        pg.mouse.set_visible(False)
         self.fps = 60
         self.background = pg.Surface(self.screen.get_size()).convert()
         self.background.fill(c.DARKGREEN)
@@ -25,7 +27,7 @@ class GameApp():
         """Initializes a new game."""
         self.floor = GenerateFloor()
         self.all_sprites = pg.sprite.LayeredDirty()     
-        self.all_sprites.clear(p.WINDOW, self.background)     
+        self.all_sprites.clear(p.WINDOW, self.background)
         self.player = Player(self, self.screen_rect.center, (16, 16))             
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
@@ -69,6 +71,8 @@ class GameApp():
         for event in pg.event.get():
             if event.type == pg.QUIT or self.keys[pg.K_ESCAPE]:
                 self.game_running = False
+            if event.type == pg.MOUSEMOTION:
+                self.mouse = pg.mouse.get_pos()
             elif event.type == pg.KEYDOWN:
                 self.keys = pg.key.get_pressed()
                 self.start_new_game(event.key)
@@ -93,7 +97,7 @@ class GameApp():
 
     def update(self, walls, enemies, dt):
         """Update all sprites."""
-        self.player.update(self.keys, walls, enemies, dt)
+        self.player.update(self.keys, walls, enemies, self.mouse, dt)
         self.room.update(dt)
         self.check_if_doors_locked()
         

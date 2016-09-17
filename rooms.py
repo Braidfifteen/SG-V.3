@@ -140,14 +140,13 @@ class Room(SetupRoom):
         self.teleporter = None
         self.pickups = None
         self.powerups = None
-        self.guns = None
-        """
+
         self.enemies = ChasingEnemy(self.game, self.player, (500, 300), (20, 20),
                                     self.enemy_container)
-        """
+
         self.make_all_sprites_container()
         
     def update(self, dt):
         self.bullet_container.update()
-        #self.enemies.update(self, dt)
+        self.enemies.update(self, dt)
         

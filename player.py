@@ -1,7 +1,7 @@
 import pygame as pg
 import constants as c
 from guns import Gun
-from gui import HealthBar, DrawText
+from gui import HealthBar, DrawText, CrossHair
 import math
 
 def divfmod(x, y):
@@ -47,11 +47,11 @@ class Player(pg.sprite.DirtySprite):
         elif event.type == pg.MOUSEBUTTONUP and event.button == 1:
             self.gun.is_shooting = False
     
-    def update(self, keys, walls, enemies, dt):      
+    def update(self, keys, walls, enemies, mouse, dt):      
         self.check_if_dead()
         self.logic.update(keys, walls, enemies, dt)
         self.gun.update(dt)
-        self.gui.update()
+        self.gui.update(mouse, dt)
    
     def check_if_dead(self):
         if self.stats.health <= 0:
@@ -67,11 +67,13 @@ class PlayerGui():
                                      self.player.all_sprites_container)
         self.health_bar = HealthBar(self, (self.player.stats.health, 25), (50, 50),
                                     c.BLUE, self.player.all_sprites_container)
-        
-    def update(self):
+        self.cross_hair = CrossHair(self.player.all_sprites_container)
+    
+    def update(self, mouse, dt):
         self.health_bar.update(self.player.stats.health)   
         self.ammo_counter.update(str(self.player.gun.clip)
                                  + "/" + str(self.player.gun.ammo_held))
+        self.cross_hair.update(mouse, dt)
         
 
 class PlayerStats():

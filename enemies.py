@@ -11,9 +11,10 @@ class Enemies(pg.sprite.DirtySprite):
     def __init__(self, game, player, pos, size, *groups):
         super().__init__(*groups)
         self.game = game
-        self.image = pg.Surface(size).convert()
+        self.image = pg.Surface(size).convert_alpha()
         self.image.fill(c.SILVER)
         self.rect = self.image.get_rect()
+        self.mask = pg.mask.from_surface(self.image)
         self.rect.topleft = pos
         self.player = player
         self.health_bar = None
@@ -31,11 +32,14 @@ class Enemies(pg.sprite.DirtySprite):
             room.health_bar_container.update(self.health)
 
     def handle_bullet_hit(self, room):
-        bullet_hit = pg.sprite.spritecollide(self, room.bullet_container, True)
+        callback = pg.sprite.collide_mask    
+        bullet_hit = pg.sprite.spritecollide(self, room.bullet_container, True, callback)
         for bullet in bullet_hit:
+            self.player.gui.cross_hair.hit = True 
             self.health -= bullet.gun.output_damage
             bullet.kill()
             self.handle_health_bar(room)
+
             
     def handle_health_bar(self, room):
         if self.health > 0:
