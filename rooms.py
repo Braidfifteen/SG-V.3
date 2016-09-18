@@ -4,19 +4,44 @@ import constants as c
 import collider
 import random as r
 from enemies import ChasingEnemy
+import prepare
 
-    
+WALL_LIST = [[0,0,32,32], [32,0,32,32], [64,0,32,32], [96,0,32,32],
+             [128,0,32,32], [160,0,32,32], [192,0,32,32]]    
+             
+FLOOR_LIST = [[224,0,32,32], [256,0,32,32], [288,0,32,32], [320,0,32,32],
+              [352,0,32,32], [384,0,32,32], [416,0,32,32], [448,0,32,32]]
+             
 class Wall(pg.sprite.DirtySprite):
-
-    image = pg.Surface(c.TILE_SIZE).convert_alpha()
-    image.fill(c.DARKRED)
-    pg.draw.rect(image, c.TEAL, ((0, 0), c.TILE_SIZE), 2)
-
     def __init__(self, topleft, size, *groups):
         super().__init__(*groups)
+        self.spritesheet = prepare.WALLS
+        self.random_wall = r.randint(0, 6)        
+        self.image = self.get_images(size)
         self.rect = self.image.get_rect(topleft=topleft)
-        self.mask = pg.mask.from_surface(Wall.image)
+        self.mask = pg.mask.from_surface(self.image)
         self.dirty = 1
+
+        
+    def get_images(self, size):
+        image = pg.Surface(size).convert_alpha()
+        image.blit(self.spritesheet, (0,0), WALL_LIST[self.random_wall])
+        return image
+        
+        
+class Background(pg.sprite.DirtySprite):
+    def __init__(self, topleft, size, *groups):
+        super().__init__(*groups)
+        self.spritesheet = prepare.WALLS
+        self.image = self.get_images(size)
+        self.rect = self.image.get_rect(topleft=topleft)
+        self.dirty = 1
+
+        
+    def get_images(self, size):
+        image = pg.Surface(size).convert()
+        image.blit(self.spritesheet, (0,0), r.choice(FLOOR_LIST))
+        return image
         
 
 class Door(pg.sprite.DirtySprite):
@@ -47,9 +72,19 @@ class SetupRoom():
         self.rect = pg.Rect(topleft, room_size)
         self.wall_size = wall_size        
         self.make_containers()
+        self.make_background(wall_size)
         self.make_doors(exits)
         self.make_borders(wall_size)   
         #self.make_random_walls(wall_size)
+        
+    def make_background(self, wall_size):
+        background_list = []
+        for y in range(0, self.rect.h, wall_size[1]):
+            for x in range(0, self.rect.w, wall_size[0]):
+                background_list.append((x, y))
+        for spot in background_list:
+            Background(spot, wall_size, self.background_container)
+                
         
     def make_borders(self, wall_size):
         door_toplefts = [door.rect.topleft for door in self.door_container]        
@@ -62,7 +97,7 @@ class SetupRoom():
         border_spots.extend(vert_border_spots)
         for spot in border_spots:
             if spot not in door_toplefts:
-                Wall(spot, wall_size, self.wall_container)   
+                Wall(spot, wall_size, self.wall_container)
 
     def make_random_walls(self, wall_size):
         self.inner_wall_rect = pg.Rect((self.rect.x+(wall_size[0]*3),
@@ -109,6 +144,7 @@ class SetupRoom():
         collider.Collider(collider_dict[direction], size, self.collider_container)    
         
     def make_containers(self):
+        self.background_container = pg.sprite.Group()
         self.collider_container = pg.sprite.Group()
         self.door_container = pg.sprite.Group()
         self.wall_container = pg.sprite.Group()
@@ -141,7 +177,7 @@ class Room(SetupRoom):
         self.pickups = None
         self.powerups = None
 
-        self.enemies = ChasingEnemy(self.game, self.player, (500, 300), (20, 20),
+        self.enemies = ChasingEnemy(self.game, self.player, (500, 300), (32, 32),
                                     self.enemy_container)
 
         self.make_all_sprites_container()

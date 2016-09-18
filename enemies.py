@@ -1,6 +1,7 @@
 import pygame as pg
 import prepare as p
 import constants as c
+import random
 from gui import HealthBar
 from math import sqrt
 
@@ -8,18 +9,40 @@ from math import sqrt
      
 class Enemies(pg.sprite.DirtySprite):
     """Basic enemy class."""
-    def __init__(self, game, player, pos, size, *groups):
+    def __init__(self, sheet, game, player, pos, size, *groups):
         super().__init__(*groups)
         self.game = game
-        self.image = pg.Surface(size).convert_alpha()
-        self.image.fill(c.SILVER)
-        self.rect = self.image.get_rect()
+        self.frame = 54
+        self.frames = self.get_frames(sheet, size)
+        self.image = self.frames[self.frame]
+        self.rect = self.image.get_rect(topleft=pos)
         self.mask = pg.mask.from_surface(self.image)
-        self.rect.topleft = pos
         self.player = player
         self.health_bar = None
-
+        self.animate_timer = 0.0
+        self.animate_fps = 50.0
+        
+    def get_frames(self, sheet, size):
+        spritesheet = sheet
+        indices = [[x, 0] for x in range(59)]
+        return self.get_images(spritesheet, indices, size)
+        
+    def get_images(self, sheet, frame_indices, size):
+        frames = []
+        for cell in frame_indices:
+            frame_rect = ((size[0]*cell[0], size[1]*cell[1]), size)
+            frames.append(sheet.subsurface(frame_rect))
+        return frames
+    
+    def next_image(self):
+        now = pg.time.get_ticks()
+        if now-self.animate_timer > 1000/self.animate_fps:
+            self.frame = (self.frame+1)%len(self.frames)
+            self.image = self.frames[self.frame]
+            self.animate_timer = now
+        
     def update(self, room, dt):
+        self.next_image()
         self.check_if_alive(room, dt)
 
     def check_if_alive(self, room, dt):
@@ -53,11 +76,14 @@ class Enemies(pg.sprite.DirtySprite):
 
 class ChasingEnemy(Enemies):
     def __init__(self, game, player, pos, size, *groups):
-        super().__init__(game, player, pos, size, *groups)
-        self.dirty = 1
-        self.speed = 2
+        self.spritesheet = p.CHASING_ENEMY
+        super().__init__(self.spritesheet, game, player, pos, size, *groups)
+        self.dirty = 2
+        self.speed = 4
         self.health = 100
         self.damage = 10
+
+        
         
     def find_player_location_vector(self):
         vx = self.player.rect.x - self.rect.x
@@ -80,7 +106,8 @@ class ChasingEnemy(Enemies):
         
     def update(self, room, dt):
         super().update(room, dt)
-        self.move_towards_player(self.find_player_location_vector())
+
+        #self.move_towards_player(self.find_player_location_vector())
         
         
         

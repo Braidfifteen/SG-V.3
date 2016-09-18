@@ -113,13 +113,13 @@ class CrossHair(pg.sprite.DirtySprite):
             self.dirty = 1
             
     def show_hit_marker(self, pos):
-        if self.image == self.images[0] and self.hit:        
+        if bool(self.images[0]) and self.hit:        
             self.image = self.images[1]
             self.rect = self.image.get_rect()
             self.rect.center = pos
             self.dirty = 1    
             self.hit = False
-        elif self.image == self.images[1] and not self.hit:
+        elif bool(self.images[1]) and not self.hit:
             self.image = self.images[0]
             self.rect = self.image.get_rect()
             self.rect.center = pos

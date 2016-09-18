@@ -21,18 +21,20 @@ class GameApp():
         pg.mouse.set_visible(False)
         self.fps = 60
         self.background = pg.Surface(self.screen.get_size()).convert()
-        self.background.fill(c.DARKGREEN)
+
+
         
     def new_game(self):
         """Initializes a new game."""
         self.floor = GenerateFloor()
         self.all_sprites = pg.sprite.LayeredDirty()     
         self.all_sprites.clear(p.WINDOW, self.background)
-        self.player = Player(self, self.screen_rect.center, (16, 16))             
+        self.player = Player(self, self.screen_rect.center, (64, 64))             
         self.make_rooms()
         self.starting_room = random.choice(self.floor.rooms_on_floor)
         self.room = self.rooms[self.starting_room]
-        self.all_sprites.add(self.room.make_all_sprites_container(),
+        self.all_sprites.add(self.room.background_container,
+                             self.room.make_all_sprites_container(),
                              self.player.all_sprites_container)
         self.main_loop()
         
@@ -60,7 +62,8 @@ class GameApp():
         self.player.rect.topleft = arrival_spots[door.direction]
         self.room = room
         self.all_sprites.empty()
-        self.all_sprites.add(self.room.all_sprites_container,
+        self.all_sprites.add(self.room.background_container,
+                             self.room.all_sprites_container,
                              self.player.all_sprites_container)
         
     def event_loop(self):

@@ -20,3 +20,5 @@
 -setup collision between enemy and player when player isn't moving
 - fix update in draw text gui.py. not independent
 - fix pickup ammo in player.py
+- make a dictionary for events
+- all maths should derive from one module/class. move_player logic and move_enemy logic should all take vector/sqrt(2) from the same place.
